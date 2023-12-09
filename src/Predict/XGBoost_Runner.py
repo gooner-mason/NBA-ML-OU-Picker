@@ -124,7 +124,7 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
     # Draw text for each dictionary in jars_bets
     for i, data in enumerate(jars_bets, start=1):
         if data['type'] == 'ML':
-            text = f"{data['team']} {data['units']}"
+            text = f"{data['team']} {data['units']} units"
         elif data['type'] == 'OU':
             text = f"{data['away_team']} at {data['home_team']} line {data['line']}"
 
