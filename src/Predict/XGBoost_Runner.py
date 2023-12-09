@@ -34,6 +34,7 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
         ou_predictions_array.append(xgb_uo.predict(xgb.DMatrix(np.array([row]))))
 
     count = 0
+    jars_bets = []
     for game in games:
         home_team = game[0]
         away_team = game[1]
@@ -45,12 +46,16 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
             winner_confidence = round(winner_confidence[0][1] * 100, 1)
             if under_over == 0:
                 un_confidence = round(ou_predictions_array[count][0][0] * 100, 1)
+                if un_confidence > 63:
+                    jars_bets.append({'type': 'OU', 'home_team': home_team, 'away_team': away_team, 'confidence': un_confidence, 'line': 'U' + str(todays_games_uo[count])})
                 print(
                     Fore.GREEN + home_team + Style.RESET_ALL + Fore.CYAN + f" ({winner_confidence}%)" + Style.RESET_ALL + ' vs ' + Fore.RED + away_team + Style.RESET_ALL + ': ' +
-                    Fore.MAGENTA + 'UNDER ' + Style.RESET_ALL + str(
-                        todays_games_uo[count]) + Style.RESET_ALL + Fore.CYAN + f" ({un_confidence}%)" + Style.RESET_ALL)
+                     Fore.MAGENTA + 'UNDER ' + Style.RESET_ALL + str(
+                         todays_games_uo[count]) + Style.RESET_ALL + Fore.CYAN + f" ({un_confidence}%)" + Style.RESET_ALL)
             else:
                 un_confidence = round(ou_predictions_array[count][0][1] * 100, 1)
+                if un_confidence > 63:
+                    jars_bets.append({'type': 'OU', 'home_team': home_team, 'away_team': away_team, 'confidence': un_confidence, 'line': 'O' + str(todays_games_uo[count])})
                 print(
                     Fore.GREEN + home_team + Style.RESET_ALL + Fore.CYAN + f" ({winner_confidence}%)" + Style.RESET_ALL + ' vs ' + Fore.RED + away_team + Style.RESET_ALL + ': ' +
                     Fore.BLUE + 'OVER ' + Style.RESET_ALL + str(
@@ -59,12 +64,16 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
             winner_confidence = round(winner_confidence[0][0] * 100, 1)
             if under_over == 0:
                 un_confidence = round(ou_predictions_array[count][0][0] * 100, 1)
+                if un_confidence > 63:
+                    jars_bets.append({'type': 'OU', 'home_team': home_team, 'away_team': away_team, 'confidence': un_confidence, 'line': 'U' + str(todays_games_uo[count])})
                 print(
                     Fore.RED + home_team + Style.RESET_ALL + ' vs ' + Fore.GREEN + away_team + Style.RESET_ALL + Fore.CYAN + f" ({winner_confidence}%)" + Style.RESET_ALL + ': ' +
                     Fore.MAGENTA + 'UNDER ' + Style.RESET_ALL + str(
                         todays_games_uo[count]) + Style.RESET_ALL + Fore.CYAN + f" ({un_confidence}%)" + Style.RESET_ALL)
             else:
                 un_confidence = round(ou_predictions_array[count][0][1] * 100, 1)
+                if un_confidence > 63:
+                    jars_bets.append({'type': 'OU', 'home_team': home_team, 'away_team': away_team, 'confidence': un_confidence, 'line': 'O' + str(todays_games_uo[count])})
                 print(
                     Fore.RED + home_team + Style.RESET_ALL + ' vs ' + Fore.GREEN + away_team + Style.RESET_ALL + Fore.CYAN + f" ({winner_confidence}%)" + Style.RESET_ALL + ': ' +
                     Fore.BLUE + 'OVER ' + Style.RESET_ALL + str(
@@ -88,6 +97,14 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
         bankroll_descriptor = ' Fraction of Bankroll: '
         bankroll_fraction_home = bankroll_descriptor + str(kc.calculate_kelly_criterion(home_team_odds[count], ml_predictions_array[count][0][1])) + '%'
         bankroll_fraction_away = bankroll_descriptor + str(kc.calculate_kelly_criterion(away_team_odds[count], ml_predictions_array[count][0][0])) + '%'
+        
+        jars_kc_home = kc.calculate_kelly_criterion(home_team_odds[count], ml_predictions_array[count][0][1])
+        if jars_kc_home > 50:
+            jars_bets.append({'type': 'ML', 'team': home_team, 'units': str(jars_kc_home / 100)})
+            
+        jars_kc_away = kc.calculate_kelly_criterion(away_team_odds[count], ml_predictions_array[count][0][1])
+        if jars_kc_away > 50:
+            jars_bets.append({'type': 'ML', 'team': away_team, 'units': str(jars_kc_away / 100)})
 
         print(home_team + ' EV: ' + expected_value_colors['home_color'] + str(ev_home) + Style.RESET_ALL + (bankroll_fraction_home if kelly_criterion else ''))
         print(away_team + ' EV: ' + expected_value_colors['away_color'] + str(ev_away) + Style.RESET_ALL + (bankroll_fraction_away if kelly_criterion else ''))
