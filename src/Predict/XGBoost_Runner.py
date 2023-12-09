@@ -7,6 +7,9 @@ from colorama import Fore, Style, init, deinit
 from src.Utils import Expected_Value
 from src.Utils import Kelly_Criterion as kc
 
+from PIL import Image, ImageDraw, ImageFont
+from datetime import date
+
 
 # from src.Utils.Dictionaries import team_index_current
 # from src.Utils.tools import get_json_data, to_data_frame, get_todays_games_json, create_todays_games
@@ -109,5 +112,30 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
         print(home_team + ' EV: ' + expected_value_colors['home_color'] + str(ev_home) + Style.RESET_ALL + (bankroll_fraction_home if kelly_criterion else ''))
         print(away_team + ' EV: ' + expected_value_colors['away_color'] + str(ev_away) + Style.RESET_ALL + (bankroll_fraction_away if kelly_criterion else ''))
         count += 1
+
+    # Calculate the image height based on the size of jars_bets
+    image_height = len(jars_bets) * 50
+
+    # Create an image
+    image = Image.new('RGB', (500, image_height), color='white')
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.load_default()
+
+    # Draw text for each dictionary in jars_bets
+    for i, data in enumerate(jars_bets, start=1):
+        if data['type'] == 'ML':
+            text = f"{data['team']} {data['units']}"
+        elif data['type'] == 'OU':
+            text = f"{data['away_team']} at {data['home_team']} line {data['line']}"
+
+        draw.text((10, (i - 1) * 50), text, fill='black', font=font)
+
+    # Define the file path with today's date
+    file_path = f"jars_picks/{date.today()}_jars-picks.png"
+
+    # Save the image
+    image.save(file_path)
+
+    print(f"Image saved at: {file_path}")
 
     deinit()
