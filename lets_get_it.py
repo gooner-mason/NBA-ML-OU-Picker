@@ -8,10 +8,10 @@ def run_commands():
         "cd src/Process-Data && python3 -m Get_Data",
         "cd src/Process-Data && python3 -m Get_Odds_Data",
         "cd src/Process-Data && python3 -m Create_Games",
-        "cd Train-Models && python3 -m XGBoost_Model_ML",
-        "cd Train-Models && python3 -m XGBoost_Model_UO",
-        "cd .. && cd ..",
-        "python3 main.py -xgb -odds=caesars -kc"
+        "cd src/Train-Models && python3 -m XGBoost_Model_ML",
+        "cd src/Train-Models && python3 -m XGBoost_Model_UO",
+        # "cd .. && cd ..",
+        # "python3 main.py -xgb -odds=caesars -kc"
     ]
 
     results = []

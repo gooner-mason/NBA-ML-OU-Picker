@@ -126,7 +126,7 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
         if data['type'] == 'ML':
             text = f"{data['team']} {data['units']} units"
         elif data['type'] == 'OU':
-            text = f"{data['away_team']} at {data['home_team']} line {data['line']}"
+            text = f"{data['away_team']} at {data['home_team']} {data['line']}"
 
         draw.text((10, (i - 1) * 50), text, fill='black', font=font)
 
