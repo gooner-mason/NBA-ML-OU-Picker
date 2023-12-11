@@ -1,5 +1,5 @@
 import argparse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 import pandas as pd
 import tensorflow as tf
@@ -9,6 +9,7 @@ from src.DataProviders.SbrOddsProvider import SbrOddsProvider
 from src.Predict import NN_Runner, XGBoost_Runner
 from src.Utils.Dictionaries import team_index_current
 from src.Utils.tools import create_todays_games_from_odds, get_json_data, to_data_frame, get_todays_games_json, create_todays_games
+from src.Utils.ses import send_email_with_attachment
 
 todays_games_url = 'https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2023/scores/00_todays_scores.json'
 data_url = 'https://stats.nba.com/stats/leaguedashteamstats?' \
@@ -92,6 +93,7 @@ def main():
         games = create_todays_games_from_odds(odds)
         if len(games) == 0:
             print("No games found.")
+            send_email_with_attachment(f'No picks for {date.today()}')
             return
         if (games[0][0] + ':' + games[0][1]) not in list(odds.keys()):
             print(games[0][0] + ':' + games[0][1])
