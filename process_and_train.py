@@ -35,5 +35,5 @@ if __name__ == "__main__":
     run_commands()
     end_time = time.time()
     elapsed_time_minutes = (end_time - start_time) / 60
-    send_email_with_attachment(f"process_and_train executed successfully in {elapsed_time_minutes} minutes!")
+    send_email_with_attachment('Process and Train Commands Executed', f"process_and_train executed successfully in {round(elapsed_time_minutes, 0)} minutes!")
     print(f"\033[92mCommands executed successfully in {elapsed_time_minutes} minutes!\033[0m")

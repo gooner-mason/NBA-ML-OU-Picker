@@ -10,6 +10,7 @@ from src.Utils import Kelly_Criterion as kc
 from PIL import Image, ImageDraw, ImageFont
 from datetime import date
 from src.Utils.ses import send_email_with_attachment
+import json
 
 
 # from src.Utils.Dictionaries import team_index_current
@@ -126,29 +127,20 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
         count += 1
 
     if jars_bets:
-        # Calculate the image height based on the size of jars_bets
-        image_height = len(jars_bets) * 50
+        formatted_jars_bets = []
 
-        # Create an image
-        image = Image.new('RGB', (500, image_height), color='#0f7f4f')
-        draw = ImageDraw.Draw(image)
-        font = ImageFont.load_default()
-
-        # Draw text for each dictionary in jars_bets
-        for i, data in enumerate(jars_bets, start=1):
+        for data in jars_bets:
             if data['type'] == 'ML':
-                text = f"{data['team']} {data['units']} units"
+                result_string = f"{data['away_team']} at {data['team']} {data['units']}"
             elif data['type'] == 'OU':
-                text = f"{data['away_team']} at {data['home_team']} {data['line']}"
+                result_string = f"{data['away_team']} at {data['home_team']} {data['line']}"
+            else:
+                result_string = "Invalid data type"  # Handle other types if needed
+            formatted_jars_bets.append(result_string)
 
-            draw.text((10, (i - 1) * 50), text, fill='white', font=font)
-
-        # Define the file path with today's date
-        file_path = f"Jars_Picks/{date.today()}_jars-picks.png"
-        image.save(file_path)
-        send_email_with_attachment(f"picks for {date.today()}", file_path)
-        
+        send_email_with_attachment("Jar's Picks", json.dumps(jars_bets, indent=4))
+        send_email_with_attachment("Jar's Formatted Picks", json.dumps(formatted_jars_bets, indent=4))
     else: 
-        send_email_with_attachment(f"No picks for {date.today()} games.")
+        send_email_with_attachment("No Picks For Todays Games", f"No picks for {date.today()} games.")
 
     deinit()

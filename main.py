@@ -93,7 +93,7 @@ def main():
         games = create_todays_games_from_odds(odds)
         if len(games) == 0:
             print("No games found.")
-            send_email_with_attachment(f'No games on {date.today()}')
+            send_email_with_attachment( 'No Games Today', f'No games on {date.today()}')
             return
         if (games[0][0] + ':' + games[0][1]) not in list(odds.keys()):
             print(games[0][0] + ':' + games[0][1])
