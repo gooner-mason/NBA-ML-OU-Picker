@@ -1,5 +1,6 @@
 import subprocess
 import time
+from src.Utils.ses import send_email_with_attachment
 
 def run_commands():
     commands = [
@@ -34,4 +35,5 @@ if __name__ == "__main__":
     run_commands()
     end_time = time.time()
     elapsed_time_minutes = (end_time - start_time) / 60
+    send_email_with_attachment(f"process_and_train executed successfully in {elapsed_time_minutes} minutes!")
     print(f"\033[92mCommands executed successfully in {elapsed_time_minutes} minutes!\033[0m")

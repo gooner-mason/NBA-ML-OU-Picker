@@ -16,10 +16,11 @@ from src.Utils.ses import send_email_with_attachment
 # from src.Utils.tools import get_json_data, to_data_frame, get_todays_games_json, create_todays_games
 init()
 xgb_ml = xgb.Booster()
+# xgb_ml.load_model('Models/XGBoost_Models/XGBoost_68.7%_ML-4.json')
 xgb_ml.load_model('Models/XGBoost_Models/XGBoost_68.7%_ML-4.json')
 xgb_uo = xgb.Booster()
 # xgb_uo.load_model('Models/XGBoost_Models/XGBoost_53.7%_UO-9.json')
-xgb_uo.load_model('Models/XGBoost_Models/XGBoost_53.9%_UO-9.json')
+xgb_uo.load_model('Models/XGBoost_Models/XGBoost_54.4%_UO-9.json')
 
 
 def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds, kelly_criterion):
@@ -52,7 +53,8 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
             if under_over == 0:
                 un_confidence = round(ou_predictions_array[count][0][0] * 100, 1)
                 if un_confidence > 63:
-                    jars_bets.append({'type': 'OU', 'home_team': home_team, 'away_team': away_team, 'confidence': un_confidence, 'line': 'U' + str(todays_games_uo[count])})
+                    if not todays_games_uo[count] == None:
+                        jars_bets.append({'type': 'OU', 'home_team': home_team, 'away_team': away_team, 'confidence': un_confidence, 'line': 'U' + str(todays_games_uo[count])})
                 print(
                     Fore.GREEN + home_team + Style.RESET_ALL + Fore.CYAN + f" ({winner_confidence}%)" + Style.RESET_ALL + ' vs ' + Fore.RED + away_team + Style.RESET_ALL + ': ' +
                      Fore.MAGENTA + 'UNDER ' + Style.RESET_ALL + str(
@@ -60,7 +62,8 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
             else:
                 un_confidence = round(ou_predictions_array[count][0][1] * 100, 1)
                 if un_confidence > 63:
-                    jars_bets.append({'type': 'OU', 'home_team': home_team, 'away_team': away_team, 'confidence': un_confidence, 'line': 'O' + str(todays_games_uo[count])})
+                    if not todays_games_uo[count] == None:
+                        jars_bets.append({'type': 'OU', 'home_team': home_team, 'away_team': away_team, 'confidence': un_confidence, 'line': 'O' + str(todays_games_uo[count])})
                 print(
                     Fore.GREEN + home_team + Style.RESET_ALL + Fore.CYAN + f" ({winner_confidence}%)" + Style.RESET_ALL + ' vs ' + Fore.RED + away_team + Style.RESET_ALL + ': ' +
                     Fore.BLUE + 'OVER ' + Style.RESET_ALL + str(
@@ -70,7 +73,8 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
             if under_over == 0:
                 un_confidence = round(ou_predictions_array[count][0][0] * 100, 1)
                 if un_confidence > 63:
-                    jars_bets.append({'type': 'OU', 'home_team': home_team, 'away_team': away_team, 'confidence': un_confidence, 'line': 'U' + str(todays_games_uo[count])})
+                    if not todays_games_uo[count] == None:
+                        jars_bets.append({'type': 'OU', 'home_team': home_team, 'away_team': away_team, 'confidence': un_confidence, 'line': 'U' + str(todays_games_uo[count])})
                 print(
                     Fore.RED + home_team + Style.RESET_ALL + ' vs ' + Fore.GREEN + away_team + Style.RESET_ALL + Fore.CYAN + f" ({winner_confidence}%)" + Style.RESET_ALL + ': ' +
                     Fore.MAGENTA + 'UNDER ' + Style.RESET_ALL + str(
@@ -78,7 +82,8 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
             else:
                 un_confidence = round(ou_predictions_array[count][0][1] * 100, 1)
                 if un_confidence > 63:
-                    jars_bets.append({'type': 'OU', 'home_team': home_team, 'away_team': away_team, 'confidence': un_confidence, 'line': 'O' + str(todays_games_uo[count])})
+                    if not todays_games_uo[count] == None:
+                        jars_bets.append({'type': 'OU', 'home_team': home_team, 'away_team': away_team, 'confidence': un_confidence, 'line': 'O' + str(todays_games_uo[count])})
                 print(
                     Fore.RED + home_team + Style.RESET_ALL + ' vs ' + Fore.GREEN + away_team + Style.RESET_ALL + Fore.CYAN + f" ({winner_confidence}%)" + Style.RESET_ALL + ': ' +
                     Fore.BLUE + 'OVER ' + Style.RESET_ALL + str(
@@ -99,42 +104,51 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
             ev_away = float(Expected_Value.expected_value(ml_predictions_array[count][0][0], int(away_team_odds[count])))
         expected_value_colors = {'home_color': Fore.GREEN if ev_home > 0 else Fore.RED,
                         'away_color': Fore.GREEN if ev_away > 0 else Fore.RED}
-        bankroll_descriptor = ' Fraction of Bankroll: '
-        bankroll_fraction_home = bankroll_descriptor + str(kc.calculate_kelly_criterion(home_team_odds[count], ml_predictions_array[count][0][1])) + '%'
-        bankroll_fraction_away = bankroll_descriptor + str(kc.calculate_kelly_criterion(away_team_odds[count], ml_predictions_array[count][0][0])) + '%'
-        
-        jars_kc_home = kc.calculate_kelly_criterion(home_team_odds[count], ml_predictions_array[count][0][1])
-        if jars_kc_home > 50:
-            jars_bets.append({'type': 'ML', 'team': home_team, 'units': str(jars_kc_home / 100)})
-            
-        jars_kc_away = kc.calculate_kelly_criterion(away_team_odds[count], ml_predictions_array[count][0][1])
-        if jars_kc_away > 50:
-            jars_bets.append({'type': 'ML', 'team': away_team, 'units': str(jars_kc_away / 100)})
 
-        print(home_team + ' EV: ' + expected_value_colors['home_color'] + str(ev_home) + Style.RESET_ALL + (bankroll_fraction_home if kelly_criterion else ''))
-        print(away_team + ' EV: ' + expected_value_colors['away_color'] + str(ev_away) + Style.RESET_ALL + (bankroll_fraction_away if kelly_criterion else ''))
+        if home_team_odds[count]:
+            bankroll_descriptor = ' Fraction of Bankroll: '
+            bankroll_fraction_home = bankroll_descriptor + str(kc.calculate_kelly_criterion(home_team_odds[count], ml_predictions_array[count][0][1])) + '%'
+            jars_kc_home = kc.calculate_kelly_criterion(home_team_odds[count], ml_predictions_array[count][0][1])
+            print
+            if jars_kc_home > 50:
+                jars_bets.append({'type': 'ML', 'team': home_team, 'units': str(jars_kc_home / 100)})
+            print(home_team + ' EV: ' + expected_value_colors['home_color'] + str(ev_home) + Style.RESET_ALL + (bankroll_fraction_home if kelly_criterion else ''))
+
+        
+        if away_team_odds[count]:
+            bankroll_descriptor = ' Fraction of Bankroll: '
+            bankroll_fraction_away = bankroll_descriptor + str(kc.calculate_kelly_criterion(away_team_odds[count], ml_predictions_array[count][0][0])) + '%'     
+            jars_kc_away = kc.calculate_kelly_criterion(away_team_odds[count], ml_predictions_array[count][0][0])
+            if jars_kc_away > 50:
+                jars_bets.append({'type': 'ML', 'team': away_team, 'units': str(jars_kc_away / 100)})
+            print(away_team + ' EV: ' + expected_value_colors['away_color'] + str(ev_away) + Style.RESET_ALL + (bankroll_fraction_away if kelly_criterion else ''))
+
         count += 1
 
-    # Calculate the image height based on the size of jars_bets
-    image_height = len(jars_bets) * 50
+    if jars_bets:
+        # Calculate the image height based on the size of jars_bets
+        image_height = len(jars_bets) * 50
 
-    # Create an image
-    image = Image.new('RGB', (500, image_height), color='#0f7f4f')
-    draw = ImageDraw.Draw(image)
-    font = ImageFont.load_default()
+        # Create an image
+        image = Image.new('RGB', (500, image_height), color='#0f7f4f')
+        draw = ImageDraw.Draw(image)
+        font = ImageFont.load_default()
 
-    # Draw text for each dictionary in jars_bets
-    for i, data in enumerate(jars_bets, start=1):
-        if data['type'] == 'ML':
-            text = f"{data['team']} {data['units']} units"
-        elif data['type'] == 'OU':
-            text = f"{data['away_team']} at {data['home_team']} {data['line']}"
+        # Draw text for each dictionary in jars_bets
+        for i, data in enumerate(jars_bets, start=1):
+            if data['type'] == 'ML':
+                text = f"{data['team']} {data['units']} units"
+            elif data['type'] == 'OU':
+                text = f"{data['away_team']} at {data['home_team']} {data['line']}"
 
-        draw.text((10, (i - 1) * 50), text, fill='white', font=font)
+            draw.text((10, (i - 1) * 50), text, fill='white', font=font)
 
-    # Define the file path with today's date
-    file_path = f"Jars_Picks/{date.today()}_jars-picks.png"
-    
-    send_email_with_attachment(f"picks for {date.today()}", file_path)
+        # Define the file path with today's date
+        file_path = f"Jars_Picks/{date.today()}_jars-picks.png"
+        image.save(file_path)
+        send_email_with_attachment(f"picks for {date.today()}", file_path)
+        
+    else: 
+        send_email_with_attachment(f"No picks for {date.today()} games.")
 
     deinit()
