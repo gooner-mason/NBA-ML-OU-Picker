@@ -9,6 +9,7 @@ from src.Utils import Kelly_Criterion as kc
 
 from PIL import Image, ImageDraw, ImageFont
 from datetime import date
+from src.Utils.ses import send_email_with_attachment
 
 
 # from src.Utils.Dictionaries import team_index_current
@@ -17,7 +18,8 @@ init()
 xgb_ml = xgb.Booster()
 xgb_ml.load_model('Models/XGBoost_Models/XGBoost_68.7%_ML-4.json')
 xgb_uo = xgb.Booster()
-xgb_uo.load_model('Models/XGBoost_Models/XGBoost_53.7%_UO-9.json')
+# xgb_uo.load_model('Models/XGBoost_Models/XGBoost_53.7%_UO-9.json')
+xgb_uo.load_model('Models/XGBoost_Models/XGBoost_53.9%_UO-9.json')
 
 
 def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds, kelly_criterion):
@@ -132,10 +134,7 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
 
     # Define the file path with today's date
     file_path = f"Jars_Picks/{date.today()}_jars-picks.png"
-
-    # Save the image
-    image.save(file_path)
-
-    print(f"Image saved at: {file_path}")
+    
+    send_email_with_attachment(f"picks for {date.today()}", file_path)
 
     deinit()
