@@ -33,7 +33,7 @@ python3 main.py -xgb -odds=caesars -kc
 ## Get new data and training models
 
 ```bash
-cd Scripts && python3 process_and_train.py
+python3 process_and_train.py
 ```
 
 - currently using XGBoost_54.4%_UO_9.json and XGBoost_68.7_ML.json
