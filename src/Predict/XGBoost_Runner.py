@@ -117,7 +117,7 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
     image_height = len(jars_bets) * 50
 
     # Create an image
-    image = Image.new('RGB', (500, image_height), color='white')
+    image = Image.new('RGB', (500, image_height), color='#0f7f4f')
     draw = ImageDraw.Draw(image)
     font = ImageFont.load_default()
 
@@ -128,10 +128,10 @@ def xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team
         elif data['type'] == 'OU':
             text = f"{data['away_team']} at {data['home_team']} {data['line']}"
 
-        draw.text((10, (i - 1) * 50), text, fill='black', font=font)
+        draw.text((10, (i - 1) * 50), text, fill='white', font=font)
 
     # Define the file path with today's date
-    file_path = f"jars_picks/{date.today()}_jars-picks.png"
+    file_path = f"Jars_Picks/{date.today()}_jars-picks.png"
 
     # Save the image
     image.save(file_path)
