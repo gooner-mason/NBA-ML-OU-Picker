@@ -4,11 +4,11 @@ from src.Utils.ses import send_email_with_attachment
 
 def run_commands():
     commands = [
-        "cd ../src/Process-Data && python3 -m Get_Data",
-        "cd ../src/Process-Data && python3 -m Get_Odds_Data",
-        "cd ../src/Process-Data && python3 -m Create_Games",
-        "cd ../src/Train-Models && python3 -m XGBoost_Model_ML",
-        "cd ../src/Train-Models && python3 -m XGBoost_Model_UO",
+        "cd src/Process-Data && python3 -m Get_Data",
+        "cd src/Process-Data && python3 -m Get_Odds_Data",
+        "cd src/Process-Data && python3 -m Create_Games",
+        "cd src/Train-Models && python3 -m XGBoost_Model_ML",
+        "cd src/Train-Models && python3 -m XGBoost_Model_UO",
         # "python3 main.py -xgb -odds=caesars -kc"
     ]
 
