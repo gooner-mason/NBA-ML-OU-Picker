@@ -16,7 +16,6 @@ Use Python 3.11. In particular the packages/libraries used are...
 - Tqdm - Progress bars
 - Requests - Http library
 - Scikit_learn - Machine learning library
-- Pillow
 - boto3
 - python-dotenv
 

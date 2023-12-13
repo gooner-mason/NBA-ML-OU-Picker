@@ -1,9 +1,6 @@
 import boto3
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.application import MIMEApplication
-from datetime import date
-from PIL import Image
 from dotenv import load_dotenv
 import os
 
@@ -15,10 +12,7 @@ aws_secret_access_key = os.getenv("AWS_SECRET_KEY")
 
 def send_email_with_attachment(subject, body):
     # Create an SES client
-    if aws_access_key_id and aws_secret_access_key:
-        ses_client = boto3.client('ses', region_name='us-east-1', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
-    else: 
-        ses_client = boto3.client('ses')
+    ses_client = boto3.client('ses', region_name='us-east-1', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
 
 
     # Create the email message

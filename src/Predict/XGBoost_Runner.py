@@ -7,7 +7,6 @@ from colorama import Fore, Style, init, deinit
 from src.Utils import Expected_Value
 from src.Utils import Kelly_Criterion as kc
 
-from PIL import Image, ImageDraw, ImageFont
 from datetime import date
 from src.Utils.ses import send_email_with_attachment
 import json
