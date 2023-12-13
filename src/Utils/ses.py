@@ -15,7 +15,11 @@ aws_secret_access_key = os.getenv("AWS_SECRET_KEY")
 
 def send_email_with_attachment(subject, body):
     # Create an SES client
-    ses_client = boto3.client('ses', region_name='us-east-1', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+    if aws_access_key_id and aws_secret_access_key:
+        ses_client = boto3.client('ses', region_name='us-east-1', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+    else: 
+        ses_client = boto3.client('ses')
+
 
     # Create the email message
     msg = MIMEMultipart()
